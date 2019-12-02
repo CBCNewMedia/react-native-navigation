@@ -1,5 +1,5 @@
 {
-  "name": "react-native-navigation",
+  "name": "@cbcnewmedia/react-native-navigation",
   "version": "3.7.0",
   "description": "React Native Navigation - truly native navigation for iOS and Android",
   "license": "MIT",
