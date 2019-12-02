@@ -26,10 +26,10 @@
     RNNComponentPresenter* presenter = [[RNNComponentPresenter alloc] init];
     RNNNavigationOptions* options = [[RNNNavigationOptions alloc] initEmptyOptions];
     RNNNavigationOptions* defaultOptions = [[RNNNavigationOptions alloc] initEmptyOptions];
-    defaultOptions.modalPresentationStyle = [[Text alloc] initWithValue:@"fullScreen"];
+    defaultOptions.modalPresentationStyle = [[Text alloc] initWithValue:@"default"];
 
     UIViewController* uut = [[UIViewController alloc] initWithLayoutInfo:nil creator:nil options:options defaultOptions:defaultOptions presenter:presenter eventEmitter:nil childViewControllers:nil];
-    XCTAssertEqual(uut.modalPresentationStyle, [RCTConvert UIModalPresentationStyle:@"fullScreen"]);
+    XCTAssertEqual(uut.modalPresentationStyle, UIModalPresentationPageSheet);
 }
 
 - (void)testInitWithLayoutInfoShouldSetChildViewControllers {
@@ -40,44 +40,6 @@
 	
 	XCTAssertEqual(uut.viewControllers[0], child1);
 	XCTAssertEqual(uut.viewControllers[1], child2);
-}
-
-- (void)testSetBackButtonIcon_withColor_shouldSetColor {
-	UIViewController* uut = [UIViewController new];
-	[[UINavigationController alloc] initWithRootViewController:uut];
-	UIColor* color = [UIColor blackColor];
-
-    [uut setBackButtonIcon:nil withColor:color title:nil];
-	XCTAssertEqual(color, uut.navigationItem.backBarButtonItem.tintColor);
-}
-
-- (void)testSetBackButtonIcon_withColor_shouldSetTitle {
-	UIViewController* uut = [UIViewController new];
-    UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:uut];
-    NSString* title = @"Title";
-
-    [uut setBackButtonIcon:nil withColor:nil title:title];
-	XCTAssertEqual(title, uut.navigationItem.backBarButtonItem.title);
-}
-
-- (void)testSetBackButtonIcon_withColor_shouldSetIcon {
-	UIViewController* uut = [UIViewController new];
-    UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:uut];
-    UIImage* icon = [UIImage new];
-
-    [uut setBackButtonIcon:icon withColor:nil title:nil];
-	XCTAssertEqual(icon, uut.navigationItem.backBarButtonItem.image);
-}
-
-- (void)testSetBackButtonIcon_shouldSetTitleOnPreviousViewControllerIfExists {
-	UIViewController* uut = [UIViewController new];
-	UIViewController* viewController2 = [UIViewController new];
-	UINavigationController* nav = [[UINavigationController alloc] init];
-	[nav setViewControllers:@[uut, viewController2]];
-	NSString* title = @"Title";
-
-    [uut setBackButtonIcon:nil withColor:nil title:title];
-	XCTAssertEqual(title, uut.navigationItem.backBarButtonItem.title);
 }
 
 - (void)testResolveOptions {
