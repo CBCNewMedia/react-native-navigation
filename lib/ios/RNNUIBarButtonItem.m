@@ -35,6 +35,8 @@
 	reactView.delegate = self;
 	reactView.backgroundColor = [UIColor clearColor];
     reactView.hidden = CGRectEqualToRect(reactView.frame, CGRectZero);
+	// Fixes mispositioned topbar components on iOS 10 (https://github.com/wix/react-native-navigation/pull/5538)
+	reactView.translatesAutoresizingMaskIntoConstraints = NO;
     
 	[NSLayoutConstraint deactivateConstraints:reactView.constraints];
 	self.widthConstraint = [NSLayoutConstraint constraintWithItem:reactView
