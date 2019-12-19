@@ -21,8 +21,8 @@
 	return self;
 }
 
-- (void)boundViewController:(UIViewController *)boundViewController {
-	[super boundViewController:boundViewController];
+- (void)bindViewController:(id)boundViewController {
+	[super bindViewController:boundViewController];
 	_navigationButtons = [[RNNNavigationButtons alloc] initWithViewController:self.boundViewController componentRegistry:_componentRegistry];
 }
 
@@ -192,7 +192,7 @@
 }
 
 - (void)setTitleViewWithSubtitle:(RNNNavigationOptions *)options {
-	if (!_customTitleView) {
+	if (!_customTitleView && ![options.topBar.largeTitle.visible getWithDefaultValue:NO]) {
 		_titleViewHelper = [[RNNTitleViewHelper alloc] initWithTitleViewOptions:options.topBar.title subTitleOptions:options.topBar.subtitle viewController:self.boundViewController];
 
 		if (options.topBar.title.text.hasValue) {

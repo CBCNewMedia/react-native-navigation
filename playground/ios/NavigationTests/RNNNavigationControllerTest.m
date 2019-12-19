@@ -17,17 +17,19 @@
 	UIViewController* _vc3;
 	RNNNavigationOptions* _options;
 	RNNTestRootViewCreator* _creator;
+	RNNEventEmitter* _eventEmitter;
 }
 
 - (void)setUp {
     [super setUp];
+	_eventEmitter = [OCMockObject niceMockForClass:[RNNEventEmitter class]];
 	_creator = [[RNNTestRootViewCreator alloc] init];
 	_vc1 = [[RNNComponentViewController alloc] initWithLayoutInfo:nil rootViewCreator:nil eventEmitter:nil presenter:[OCMockObject partialMockForObject:[[RNNComponentPresenter alloc] init]] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
 	_vc2 = [[RNNComponentViewController alloc] initWithLayoutInfo:nil rootViewCreator:nil eventEmitter:nil presenter:[[RNNComponentPresenter alloc] init] options:[[RNNNavigationOptions alloc] initEmptyOptions] defaultOptions:[[RNNNavigationOptions alloc] initEmptyOptions]];
 	_vc2Mock = [OCMockObject partialMockForObject:_vc2];
 	_vc3 = [UIViewController new];
 	_options = [OCMockObject partialMockForObject:[[RNNNavigationOptions alloc] initEmptyOptions]];
-	self.uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:_creator options:_options defaultOptions:nil presenter:[OCMockObject partialMockForObject:[[RNNStackPresenter alloc] init]] eventEmitter:nil childViewControllers:@[_vc1, _vc2]];
+	self.uut = [[RNNStackController alloc] initWithLayoutInfo:nil creator:_creator options:_options defaultOptions:nil presenter:[OCMockObject partialMockForObject:[[RNNStackPresenter alloc] init]] eventEmitter:_eventEmitter childViewControllers:@[_vc1, _vc2]];
 }
 
 - (void)testInitWithLayoutInfo_shouldBindPresenter {
@@ -139,10 +141,17 @@
 	[uut setViewControllers:@[_vc1, _vc2]];
 	
 	[[(id)uut.presenter expect] applyOptionsBeforePopping:[OCMArg any]];
-	
 	[uut popViewControllerAnimated:NO];
-	
 	[(id)uut.presenter verify];
+}
+
+- (void)testPopViewController_ShouldEmitScreenPoppedEvent {
+	RNNStackController* uut = [RNNStackController new];
+	[uut setViewControllers:@[_vc1, _vc2]];
+	
+	[[(id)uut.eventEmitter expect] sendScreenPoppedEvent:_vc2.layoutInfo.componentId];
+	[uut popViewControllerAnimated:NO];
+	[(id)uut.eventEmitter verify];
 }
 
 - (void)testOverrideOptionsShouldOverrideOptionsState {
@@ -150,38 +159,6 @@
 	[(RNNNavigationOptions*)[(id)self.uut.options expect] overrideOptions:overrideOptions];
 	[self.uut overrideOptions:overrideOptions];
 	[(id)self.uut.options verify];
-}
-
-- (void)testSetTopBarBackgroundColor_ShouldSetBackgroundColor {
-	UIColor* color = UIColor.redColor;
-	[self.uut setTopBarBackgroundColor:color];
-	XCTAssertEqual(self.uut.navigationBar.standardAppearance.backgroundColor, color);
-	XCTAssertEqual(self.uut.navigationBar.compactAppearance.backgroundColor, color);
-	XCTAssertEqual(self.uut.navigationBar.scrollEdgeAppearance.backgroundColor, color);
-}
-
-- (void)testSetTopBarBackgroundColor_ShouldSetTransparentBackgroundColor {
-	UIColor* transparentColor = UIColor.clearColor;
-	[self.uut setTopBarBackgroundColor:transparentColor];
-
-	XCTAssertTrue(self.uut.navigationBar.translucent);
-	XCTAssertNil(self.uut.navigationBar.standardAppearance.backgroundColor);
-	XCTAssertNil(self.uut.navigationBar.compactAppearance.backgroundColor);
-	XCTAssertNil(self.uut.navigationBar.scrollEdgeAppearance.backgroundColor);
-}
-
-- (void)testSetTopBarBackgroundColor_NilColorShouldResetNavigationBar {
-	UIColor* transparentColor = UIColor.clearColor;
-	UIColor* redColor = UIColor.redColor;
-	
-	[self.uut setTopBarBackgroundColor:transparentColor];
-	[self.uut setTopBarBackgroundColor:redColor];
-	[self.uut setTopBarBackgroundColor:nil];
-	
-	XCTAssertNil(self.uut.navigationBar.barTintColor);
-	XCTAssertNil(self.uut.navigationBar.standardAppearance.backgroundColor);
-	XCTAssertNil(self.uut.navigationBar.compactAppearance.backgroundColor);
-	XCTAssertNil(self.uut.navigationBar.scrollEdgeAppearance.backgroundColor);
 }
 
 - (RNNStackController *)createNavigationControllerWithOptions:(RNNNavigationOptions *)options {

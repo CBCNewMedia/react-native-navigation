@@ -1,7 +1,5 @@
 #import "UINavigationController+RNNOptions.h"
 #import "RNNFontAttributesCreator.h"
-#import "UIImage+tint.h"
-#import "UINavigationBar+utils.h"
 
 const NSInteger BLUR_TOPBAR_TAG = 78264802;
 
@@ -35,20 +33,8 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 	self.hidesBarsOnSwipe = hideOnScroll;
 }
 
-- (void)setNavigationBarNoBorder:(BOOL)noBorder {
-	[self.navigationBar rnn_showBorder:!noBorder];
-}
-
 - (void)setBarStyle:(UIBarStyle)barStyle {
 	self.navigationBar.barStyle = barStyle;
-}
-
-- (void)setNavigationBarFontFamily:(NSString *)fontFamily fontSize:(NSNumber *)fontSize fontWeight:(NSString *)fontWeight color:(UIColor *)color {
-	NSDictionary* fontAttributes = [RNNFontAttributesCreator createWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight color:color];
-	
-	if (fontAttributes.allKeys.count > 0) {
-		self.navigationBar.titleTextAttributes = fontAttributes;
-	}
 }
 
 - (void)setNavigationBarLargeTitleVisible:(BOOL)visible {
@@ -59,17 +45,6 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 			self.navigationBar.prefersLargeTitles = NO;
 		}
 	}
-}
-
-- (void)setNavigationBarLargeTitleFontFamily:(NSString *)fontFamily fontSize:(NSNumber *)fontSize fontWeight:(NSString *)fontWeight color:(UIColor *)color {
-	if (@available(iOS 11.0, *)) {
-		NSDictionary* fontAttributes = [RNNFontAttributesCreator createWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight color:color];
-		self.navigationBar.largeTitleTextAttributes = fontAttributes;
-	}
-}
-
-- (void)setNavigationBarTranslucent:(BOOL)translucent {
-	self.navigationBar.translucent = translucent;
 }
 
 - (void)setNavigationBarBlur:(BOOL)blur {
@@ -101,24 +76,8 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 	self.navigationBar.clipsToBounds = clipsToBounds;
 }
 
-- (void)setBackButtonIcon:(UIImage *)icon withColor:(UIColor *)color title:(NSString *)title showTitle:(BOOL)showTitle {
-    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
-    if (icon) {
-        icon = color
-        ? [[icon withTintColor:color] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]
-        : icon;
-    }
-    
-    [self.navigationBar rnn_setBackIndicatorImage:icon];
-
-    UIViewController *lastViewControllerInStack = self.viewControllers.count > 1 ? self.viewControllers[self.viewControllers.count - 2] : self.topViewController;
-
-    if (showTitle) {
-        backItem.title = title ? title : lastViewControllerInStack.navigationItem.title;
-    }
-    backItem.tintColor = color;
-
-    lastViewControllerInStack.navigationItem.backBarButtonItem = backItem;
+- (CGFloat)getTopBarHeight {
+    return self.navigationBar.frame.size.height;
 }
 
 @end
