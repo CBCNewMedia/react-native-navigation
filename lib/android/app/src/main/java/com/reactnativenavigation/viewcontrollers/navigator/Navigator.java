@@ -66,7 +66,6 @@ public class Navigator extends ParentController {
         this.contentLayout = contentLayout;
         contentLayout.addView(rootLayout);
         contentLayout.addView(modalsLayout);
-        contentLayout.addView(overlaysLayout);
     }
 
     public Navigator(final Activity activity, ChildControllersRegistry childRegistry, ModalStack modalStack, OverlayManager overlayManager, RootPresenter rootPresenter) {
@@ -201,7 +200,7 @@ public class Navigator extends ParentController {
     }
 
     public void showOverlay(ViewController overlay, CommandListener listener) {
-        overlayManager.show(overlaysLayout, overlay, listener);
+        overlayManager.show(contentLayout, overlaysLayout, overlay, listener);
     }
 
     public void dismissOverlay(final String componentId, CommandListener listener) {
